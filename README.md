@@ -2,6 +2,12 @@
 
 Projeto desenvolvido em Java para simular uma **Plataforma de Monitoramento Espacial**. A aplicação roda no console e permite acompanhar sensores, controlar sistemas de propulsão e gerenciar dados de uma missão espacial.
 
+## Integrantes 
+
+Felipe Krzyzanovski os Santos Menezes - RM 564878
+Lucas Ferrari LIma - RM 563119
+Leonardo Lopes Oliveira - RM 565437
+
 ## Objetivo
 
 O objetivo do projeto é aplicar conceitos de Programação Orientada a Objetos em um sistema de monitoramento, usando classes abstratas, interfaces, herança, encapsulamento, polimorfismo e validações de dados.
