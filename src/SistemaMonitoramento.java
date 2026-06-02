@@ -263,12 +263,13 @@ public class SistemaMonitoramento {
     }
 
     private static double lerDouble(String prompt) {
-        System.out.print(prompt);
-        try {
-            return Double.parseDouble(scanner.nextLine().trim());
-        } catch (NumberFormatException e) {
-            System.out.println("[ERRO] Entrada inválida. Digite um número válido.");
-            return 0;
+        while (true) {
+            System.out.print(prompt);
+            try {
+                return Double.parseDouble(scanner.nextLine().trim());
+            } catch (NumberFormatException e) {
+                System.out.println("[ERRO] Entrada inválida. Digite um número válido.");
+            }
         }
     }
 

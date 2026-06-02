@@ -11,11 +11,18 @@ public class PropulsaoQuimica extends SistemaPropulsao {
 
     @Override
     public void acelerar(double porcentagem) {
-        if (!aplicarPotencia(porcentagem)) return;
+        if (!validarOperacao(porcentagem)) return;
 
         double consumoAtual = (porcentagem / 100.0) * taxaConsumo;
+        if (consumoAtual > nivelCombustivelPropulsor) {
+            System.out.println("[ERRO] Combustível insuficiente para acelerar nessa potência.");
+            System.out.println("  Necessário: " + String.format("%.1f", consumoAtual) + " L");
+            System.out.println("  Disponível: " + String.format("%.1f", nivelCombustivelPropulsor) + " L");
+            return;
+        }
+
+        atualizarPotencia(porcentagem);
         nivelCombustivelPropulsor -= consumoAtual;
-        if (nivelCombustivelPropulsor < 0) nivelCombustivelPropulsor = 0;
 
         System.out.println("[" + getNome() + "] Acelerando a " + porcentagem + "% → Empuxo: " + getEmpuxoGerado() + " kN");
         System.out.println("  Combustível restante: " + String.format("%.1f", nivelCombustivelPropulsor) + " L");

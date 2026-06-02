@@ -26,8 +26,8 @@ public abstract class SistemaPropulsao extends ComponenteEspacial {
     // Cada subclasse define como a aceleração funciona
     public abstract void acelerar(double porcentagem);
 
-    // Valida e aplica a potência — centralizado para evitar repetição nas subclasses
-    protected boolean aplicarPotencia(double porcentagem) {
+    // Valida a operação antes de alterar potência e empuxo.
+    protected boolean validarOperacao(double porcentagem) {
         if (porcentagem < 0 || porcentagem > 100) {
             System.out.println("[ERRO] Potência deve estar entre 0 e 100. Valor recebido: " + porcentagem);
             return false;
@@ -36,8 +36,20 @@ public abstract class SistemaPropulsao extends ComponenteEspacial {
             System.out.println("[ERRO] Motor desligado. Ligue o motor antes de acelerar.");
             return false;
         }
+        return true;
+    }
+
+    protected void atualizarPotencia(double porcentagem) {
         this.potenciaAtual = porcentagem;
         this.empuxoGerado = (porcentagem / 100.0) * empuxoMaximo;
+    }
+
+    // Valida e aplica a potência — centralizado para evitar repetição nas subclasses
+    protected boolean aplicarPotencia(double porcentagem) {
+        if (!validarOperacao(porcentagem)) {
+            return false;
+        }
+        atualizarPotencia(porcentagem);
         return true;
     }
 

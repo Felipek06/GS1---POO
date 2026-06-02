@@ -11,16 +11,16 @@ public class PropulsaoEletrica extends SistemaPropulsao {
 
     @Override
     public void acelerar(double porcentagem) {
-        if (!aplicarPotencia(porcentagem)) return;
+        if (!validarOperacao(porcentagem)) return;
 
-        if (cargaBateria <= 0) {
+        double consumoAtual = (porcentagem / 100.0) * taxaConsumoBateria;
+        if (consumoAtual > cargaBateria) {
             System.out.println("[ERRO] Bateria descarregada. Não é possível acelerar.");
             return;
         }
 
-        double consumoAtual = (porcentagem / 100.0) * taxaConsumoBateria;
+        atualizarPotencia(porcentagem);
         cargaBateria -= consumoAtual;
-        if (cargaBateria < 0) cargaBateria = 0;
 
         System.out.println("[" + getNome() + "] Acelerando a " + porcentagem + "% → Empuxo: " + getEmpuxoGerado() + " kN");
         System.out.println("  Carga da bateria: " + String.format("%.1f", cargaBateria) + "%");
