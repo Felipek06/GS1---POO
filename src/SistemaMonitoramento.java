@@ -196,13 +196,47 @@ public class SistemaMonitoramento {
     // SIMULAÇÃO DE ALERTAS
     // ===========================
     private static void simularAlertas() {
-        System.out.println("\n=== SIMULANDO LEITURAS E VERIFICANDO ALERTAS ===");
-        try {
-            executarLeituraSensor(sensorTemp, "°C");
-            executarLeituraSensor(sensorPressao, " kPa");
-            executarLeituraSensor(sensorRad, " mSv/h");
-        } catch (Exception e) {
-            System.out.println("[ERRO] Falha na simulação de alertas: " + e.getMessage());
+        System.out.println("\n=== SIMULAÇÃO DE ALERTAS (cenários forçados) ===");
+        System.out.println("Os valores abaixo são simulados para demonstrar os 3 níveis de alerta.\n");
+
+        // Cenário 1 — OK: temperatura dentro do limite (valor forçado: 30°C, limite: 80°C)
+        System.out.println("-- Cenário 1: valor dentro do limite --");
+        sensorTemp.setLimiteAlerta(80.0);
+        simularLeitura(sensorTemp, 30.0, "°C");
+
+        // Cenário 2 — ATENCAO: temperatura na zona de atenção (76% do limite → 61°C)
+        System.out.println("\n-- Cenário 2: valor na zona de atenção (≥75% do limite) --");
+        simularLeitura(sensorTemp, 61.0, "°C");
+
+        // Cenário 3 — ALERTA: pressão fora do limite máximo
+        System.out.println("\n-- Cenário 3: pressão acima do limite --");
+        sensorPressao.setLimiteAlerta(130.0);
+        simularLeitura(sensorPressao, 145.0, " kPa");
+
+        // Cenário 4 — CRITICO: sensor com valor fisicamente impossível (falha de funcionamento)
+        System.out.println("\n-- Cenário 4: sensor com falha de funcionamento (valor impossível) --");
+        simularLeitura(sensorRad, -300.0, " mSv/h");
+
+        System.out.println("\n=== FIM DA SIMULAÇÃO ===");
+    }
+
+    // Simula uma leitura com valor forçado e verifica o nível de alerta correspondente
+    // Não altera o estado interno do sensor — é apenas uma demonstração visual
+    private static void simularLeitura(Sensor sensor, double valorSimulado, String unidade) {
+        System.out.println("[" + sensor.retornarTipo() + "] Valor simulado: " + valorSimulado + unidade);
+        double limiteAlerta = sensor.getLimiteAlerta();
+
+        // Considera falha de funcionamento se o valor for fisicamente impossível (abaixo do zero absoluto)
+        boolean falhaFuncionamento = valorSimulado < -273.15;
+
+        if (falhaFuncionamento) {
+            emitirAlerta("CRITICO", sensor.retornarTipo() + " com FALHA DE FUNCIONAMENTO!");
+        } else if (valorSimulado > limiteAlerta) {
+            emitirAlerta("ALERTA", sensor.retornarTipo() + " fora dos limites: " + valorSimulado + unidade);
+        } else if (valorSimulado >= limiteAlerta * 0.75) {
+            emitirAlerta("ATENCAO", sensor.retornarTipo() + " se aproximando do limite: " + valorSimulado + unidade);
+        } else {
+            System.out.println("[OK] " + sensor.retornarTipo() + " dentro dos limites.");
         }
     }
 
@@ -235,9 +269,18 @@ public class SistemaMonitoramento {
             emitirAlerta("CRITICO", sensor.retornarTipo() + " com FALHA DE FUNCIONAMENTO!");
         } else if (sensor.estaEmAlerta()) {
             emitirAlerta("ALERTA", sensor.retornarTipo() + " fora dos limites: " + valor + unidade);
+        } else if (proximoDoLimite(sensor, valor)) {
+            emitirAlerta("ATENCAO", sensor.retornarTipo() + " se aproximando do limite: " + valor + unidade);
         } else {
             System.out.println("[OK] " + sensor.retornarTipo() + " dentro dos limites.");
         }
+    }
+
+    // Retorna true se o valor já passou de 75% do limite de alerta (zona de atenção)
+    private static boolean proximoDoLimite(Sensor sensor, double valor) {
+        double limiteAlerta = sensor.getLimiteAlerta();
+        if (limiteAlerta <= 0) return false;
+        return valor >= limiteAlerta * 0.75;
     }
 
     private static void emitirAlerta(String nivel, String mensagem) {

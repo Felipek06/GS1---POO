@@ -12,6 +12,9 @@ public interface Sensor {
     // Define o limite máximo aceitável antes de gerar alerta
     void setLimiteAlerta(double limite);
 
+    // Retorna o limite máximo aceitável configurado
+    double getLimiteAlerta();
+
     // Verifica se o valor atual ultrapassou o limite de alerta
     boolean estaEmAlerta();
 }

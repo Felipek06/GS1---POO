@@ -25,7 +25,9 @@ public class SensorTemperatura extends ComponenteEspacial implements Sensor {
 
     @Override
     public boolean verificarFuncionamento() {
-        return getTemperatura() < 100.0;
+        // Verifica se o valor lido está dentro de uma faixa fisicamente plausível
+        // (evita confundir com getTemperatura(), que é a temp. interna do componente)
+        return valorAtual > -273.15;  // acima do zero absoluto = sensor respondendo
     }
 
     @Override
@@ -36,6 +38,11 @@ public class SensorTemperatura extends ComponenteEspacial implements Sensor {
     @Override
     public void setLimiteAlerta(double limite) {
         this.limiteAlerta = limite;
+    }
+
+    @Override
+    public double getLimiteAlerta() {
+        return limiteAlerta;
     }
 
     @Override
@@ -55,6 +62,5 @@ public class SensorTemperatura extends ComponenteEspacial implements Sensor {
     }
 
     public double getValorAtual()   { return valorAtual; }
-    public double getLimiteAlerta() { return limiteAlerta; }
     public String getUnidade()      { return unidade; }
 }

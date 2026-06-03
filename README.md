@@ -2,7 +2,7 @@
 
 Projeto desenvolvido em Java para simular uma **Plataforma de Monitoramento Espacial**. A aplicação roda no console e permite acompanhar sensores, controlar sistemas de propulsão e gerenciar dados de uma missão espacial.
 
-## Integrantes 
+## Integrantes
 
 Felipe Krzyzanovski os Santos Menezes - RM 564878
 Lucas Ferrari LIma - RM 563119
@@ -68,6 +68,7 @@ Interface que define o comportamento padrão dos sensores:
 - `verificarFuncionamento()`
 - `retornarTipo()`
 - `setLimiteAlerta()`
+- `getLimiteAlerta()`
 - `estaEmAlerta()`
 
 ### Sensores
@@ -91,9 +92,9 @@ Classe responsável pelos dados da missão, como nome, número de tripulantes, c
 
 - **Abstração:** uso das classes abstratas `ComponenteEspacial` e `SistemaPropulsao`.
 - **Encapsulamento:** atributos privados com acesso controlado por getters, setters e validações.
-- **Herança:** sensores e propulsores reaproveitam comportamentos das classes base.
-- **Polimorfismo:** sensores diferentes são tratados pela interface `Sensor`.
-- **Interface:** `Sensor` define um contrato comum para todos os tipos de sensores.
+- **Herança:** sensores e propulsores reaproveitam comportamentos das classes base; `super()` é usado nos construtores e em `executarDiagnostico()`.
+- **Polimorfismo:** o método `executarLeituraSensor(Sensor sensor, ...)` recebe qualquer implementação da interface `Sensor`, operando sobre tipos distintos de forma uniforme.
+- **Interface:** `Sensor` define um contrato comum para todos os tipos de sensores, incluindo leitura de valor, verificação de funcionamento e controle de limites de alerta.
 
 ## Como executar
 
@@ -136,6 +137,12 @@ A missão inicial configurada no sistema é:
 - Trajetória: `Terra → Lua → Marte`
 - Código de acesso: `ALFA-7729`
 - Senha para dados restritos: `FIAP2026`
+
+## Correções aplicadas
+
+- **`SensorTemperatura.verificarFuncionamento()`:** corrigido para checar `valorAtual` do sensor (leitura real) em vez de `getTemperatura()`, que retornava a temperatura interna fixa do componente e nunca detectaria falha.
+- **Nível ATENCAO:** adicionada zona de atenção em `verificarAlertaSensor()` — quando o valor ultrapassa 75% do limite de alerta o sistema emite `[ATENCAO]` antes de chegar ao `[ALERTA]`. O método `getLimiteAlerta()` foi adicionado à interface `Sensor` para permitir essa verificação de forma polimórfica.
+- **Simulação de alertas:** a opção 4 do menu agora usa cenários forçados que garantem a exibição dos 3 níveis (OK, ATENCAO, ALERTA, CRITICO) independentemente dos valores aleatórios gerados pelos sensores.
 
 ## Observações
 
